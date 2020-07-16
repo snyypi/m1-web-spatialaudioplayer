@@ -91,8 +91,9 @@ async function setupCamera() {
 }
 
 let faceWidthSaved = -1.0;
-var faceDistance = 1.0;
-var faceDistanceFar = 0.0;
+var faceDistance = 0.7071;
+var faceDistanceTwo = 0.7071
+var faceDistanceThree = 0.0;
 
 // Convert from degrees to radians.
 Math.radians = function(degrees) {
@@ -266,11 +267,14 @@ Mach1DecodeModule().then(function(m1DecodeModule) {
     m1Decode.setFilterSpeed(0.9);
 });
 
-let m1SoundPlayerClose = new Mach1SoundPlayer();
-m1SoundPlayerClose.setup(["audio/m1spatialclose/T1.ogg", "audio/m1spatialclose/T2.ogg", "audio/m1spatialclose/T3.ogg", "audio/m1spatialclose/T4.ogg", "audio/m1spatialclose/B5.ogg", "audio/m1spatialclose/B6.ogg", "audio/m1spatialclose/B7.ogg", "audio/m1spatialclose/B8.ogg"]);
+let m1SoundPlayerOne = new Mach1SoundPlayer();
+m1SoundPlayerOne.setup(["audio/m1spatial-1/T1.ogg", "audio/m1spatial-1/T2.ogg", "audio/m1spatial-1/T3.ogg", "audio/m1spatial-1/T4.ogg", "audio/m1spatial-1/B5.ogg", "audio/m1spatial-1/B6.ogg", "audio/m1spatial-1/B7.ogg", "audio/m1spatial-1/B8.ogg"]);
 
-let m1SoundPlayerFar = new Mach1SoundPlayer();
-m1SoundPlayerFar.setup(["audio/m1spatialfar/T1.ogg", "audio/m1spatialfar/T2.ogg", "audio/m1spatialfar/T3.ogg", "audio/m1spatialfar/T4.ogg", "audio/m1spatialfar/B5.ogg", "audio/m1spatialfar/B6.ogg", "audio/m1spatialfar/B7.ogg", "audio/m1spatialfar/B8.ogg"]);
+let m1SoundPlayerTwo = new Mach1SoundPlayer();
+m1SoundPlayerTwo.setup(["audio/m1spatial-2/T1.ogg", "audio/m1spatial-2/T2.ogg", "audio/m1spatial-2/T3.ogg", "audio/m1spatial-2/T4.ogg", "audio/m1spatial-2/B5.ogg", "audio/m1spatial-2/B6.ogg", "audio/m1spatial-2/B7.ogg", "audio/m1spatial-2/B8.ogg"]);
+
+let m1SoundPlayerThree = new Mach1SoundPlayer();
+m1SoundPlayerThree.setup(["audio/m1spatial-3/T1.ogg", "audio/m1spatial-3/T2.ogg", "audio/m1spatial-3/T3.ogg", "audio/m1spatial-3/T4.ogg", "audio/m1spatial-3/B5.ogg", "audio/m1spatial-3/B6.ogg", "audio/m1spatial-3/B7.ogg", "audio/m1spatial-3/B8.ogg"]);
 
 function Decode(yaw, pitch, roll) {
     if (m1Decode != null && yaw != null && pitch != null && roll != null) {
@@ -279,10 +283,11 @@ function Decode(yaw, pitch, roll) {
         let decoded = m1Decode.decode(yaw, pitch, roll);
         m1Decode.endBuffer();
 
-        // APPLY DISTANCE CROSSFADE BETWEEN TWO MACH1SPATIAL MIXES
+        // APPLY DISTANCE CROSSFADE BETWEEN THREE MACH1SPATIAL MIXES
         window.faceDistanceFar = Math.abs(window.faceDistance - 1.0);
-        m1SoundPlayerClose.updateGains(decoded.map(x => x * window.faceDistance));
-        m1SoundPlayerFar.updateGains(decoded.map(x => x * window.faceDistanceFar));
+        m1SoundPlayerOne.updateGains(decoded.map(x => x * window.faceDistance));
+        m1SoundPlayerTwo.updateGains(decoded.map(x => x * window.faceDistance));
+        m1SoundPlayerThree.updateGains(decoded.map(x => x * window.faceDistanceFar));
 
         var strDebug = "";
         decoded.forEach(function(d) {
@@ -292,15 +297,17 @@ function Decode(yaw, pitch, roll) {
 }
 
 function Play() {
-    m1SoundPlayerClose.play();
+    m1SoundPlayerOne.play();
 	 if (window.modeTracker == "facetracker") {
-		 m1SoundPlayerFar.play();
+        m1SoundPlayerTwo.play();
+		m1SoundPlayerThree.play();
 	 }
 }
 
 function Stop() {
-    m1SoundPlayerClose.stop();
-	m1SoundPlayerFar.stop();
+    m1SoundPlayerOne.stop();
+    m1SoundPlayerTwo.stop();
+	m1SoundPlayerThree.stop();
 }
 
 
