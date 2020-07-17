@@ -230,8 +230,15 @@ async function trackerMain() {
     });
     renderPrediction();
 
-    info.innerHTML = "";
-    document.getElementById("main").style.display = "";
+    // wait for loaded audio
+    var timer = setInterval(function() {
+        if (m1SoundPlayerOne.isReady && m1SoundPlayerTwo.isReady && m1SoundPlayerThree.isReady) {
+            clearInterval(timer);
+            
+            info.innerHTML = "";
+            document.getElementById("main").style.display = "";
+        }
+    }, 1000);
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
